@@ -1,0 +1,16 @@
+{
+  "name": "eg_grunt_copy",
+  "version": "1.0.0",
+  "description": "testing grunt",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-copy": "^1.0.0"
+  }
+}
