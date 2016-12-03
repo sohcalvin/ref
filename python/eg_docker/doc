@@ -1,0 +1,6 @@
+from ubuntu:14.04
+
+COPY b.txt .
+COPY a.txt .
+COPY a.txt 1.txt
+#COPY b.txt 2.txt

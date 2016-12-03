@@ -1,0 +1,29 @@
+FROM	ubuntu:14.04
+
+MAINTAINER	Calvin Soh soh_calvin@yahoo.com
+
+#install common dependencies needed by subsequent images
+RUN apt-get update && apt-get install -y \
+	    git \
+	    gfortran \
+	    libatlas-base-dev \
+	    libblas-dev \ 
+	    liblapack-dev \
+	    nodejs \
+	    nodejs-legacy \
+	    npm \
+	    python-bs4 \
+	    python-dev \
+	    python-nltk \
+	    python3-pip \
+	    ssh \
+	    sudo \
+	    supervisor  
+
+RUN pip3 install Flask==0.11.1
+RUN pip3 install Flask-RESTful==0.3.5
+RUN pip3 install pymongo==3.2.2
+
+COPY  webapp.py .
+EXPOSE 5001
+CMD ["python3", "webapp.py"]

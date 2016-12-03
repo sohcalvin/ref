@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script src="https://code.jquery.com/jquery-2.2.1.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/bootstrap.tagsinput/0.4.2/bootstrap-tagsinput.min.js"></script>
+
+
+
+
+<style type="text/css">
+.bootstrap-tagsinput {
+    width: 100%;
+}
+.label {
+    line-height: 2 !important;
+}
+</style>
+
+
+<script>
+$(document).ready(function () {
+    $('#bootstrapTagsInputForm')
+        .find('[name="cities"]')
+            // Revalidate the cities field when it is changed
+            .change(function (e) {
+                $('#bootstrapTagsInputForm').formValidation('revalidateField', 'cities');
+            })
+            .end()
+        .find('[name="countries"]')
+            // Revalidate the countries field when it is changed
+            .change(function (e) {
+                $('#bootstrapTagsInputForm').formValidation('revalidateField', 'countries');
+            })
+            .end()
+        .formValidation({
+            framework: 'bootstrap',
+            excluded: ':disabled',
+            icon: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                cities: {
+                    validators: {
+                        notEmpty: {
+                            message: 'Please enter at least one city you like the most.'
+                        }
+                    }
+                },
+                countries: {
+                    validators: {
+                        callback: {
+                            message: 'Please enter 2-4 countries you like most.',
+                            callback: function (value, validator, $field) {
+                                // Get the entered elements
+                                var options = validator.getFieldElements('countries').tagsinput('items');
+                                return (options !== null && options.length >= 2 && options.length <= 4);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+});
+</script>
+
+
+
+</head>
+<body>
+<form id="bootstrapTagsInputForm" method="post" class="form-horizontal">
+    <div class="form-group">
+        <label class="col-xs-3 control-label">Cities</label>
+        <div class="col-xs-8">
+            <input type="text" name="cities" class="form-control"
+                   value="Hanoi" data-role="tagsinput" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-xs-3 control-label">Countries</label>
+        <div class="col-xs-8">
+            <input type="text" name="countries" class="form-control"
+                   value="Vietnam" data-role="tagsinput" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-5 col-xs-offset-3">
+            <!--<button type="submit" class="btn btn-default">Validate</button>-->
+        </div>
+    </div>
+</form>
+
+</body>
+</html>

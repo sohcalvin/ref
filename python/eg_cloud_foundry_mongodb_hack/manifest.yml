@@ -1,0 +1,16 @@
+---
+applications:
+- name: delme
+  memory: 1GB
+  buildpack: python_buildpack
+  #git://github.com/ihuston/python-conda-buildpack.git
+  timeout: 180
+  command: python webapp_mongodb_hack.py 
+  #command: .conda/bin/python webapp.py
+  env:
+    PYTHONPATH: .
+  services:
+    - cvr-mongodb 
+#- name: delme_worker
+#  command: python hello.py
+#  no-route: true

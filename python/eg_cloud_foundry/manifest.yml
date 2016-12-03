@@ -1,0 +1,22 @@
+---
+applications:
+- name: delme
+  memory: 1GB
+  buildpack: python_buildpack
+  #git://github.com/ihuston/python-conda-buildpack.git
+  timeout: 180
+  command: python webapp.py
+  #command: .conda/bin/python webapp.py
+  env:
+    PYTHONPATH: .
+    MONGODB_HOST: 'eval :json.loads(os.environ["VCAP_SERVICES"])["mongodb"][0]["credentials"]["hostname"]'
+    MONGODB_PORT: 'eval :json.loads(os.environ["VCAP_SERVICES"])["mongodb"][0]["credentials"]["port"]'
+    MONGODB_USERNAME: 'eval :json.loads(os.environ["VCAP_SERVICES"])["mongodb"][0]["credentials"]["username"]'
+    MONGODB_PASSWORD: 'eval :json.loads(os.environ["VCAP_SERVICES"])["mongodb"][0]["credentials"]["password"]'
+    MONGODB_AUTH_DB: 'eval :json.loads(os.environ["VCAP_SERVICES"])["mongodb"][0]["credentials"]["dbname"]'
+    MONGODB_URI: 'eval :json.loads(os.environ["VCAP_SERVICES"])["mongodb"][0]["credentials"]["uri"]'
+  services:
+    - sap-mongodb 
+#- name: delme_worker
+#  command: python hello.py
+#  no-route: true

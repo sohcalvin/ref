@@ -1,0 +1,31 @@
+# docker build -t flask-gunicorn -f Dockerfile_ubuntu14-gunicorn-flask.txt .
+# docker run -d --name gunicorn -p 8000:8000 flask-gunicorn
+FROM	ubuntu:14.04
+
+MAINTAINER	Calvin Soh soh_calvin@yahoo.com
+
+RUN mkdir -p /home/vcap/app/
+
+
+RUN apt-get update && apt-get install -y python3-pip \
+curl
+RUN pip3 install flask
+RUN pip3 install gunicorn
+
+
+COPY  webapp.py /home/vcap/app/
+WORKDIR /home/vcap/app
+EXPOSE 8000
+#CMD ["python3", "webapp.py"]
+#CMD ["gunicorn", "-b", "0.0.0.0:8000","-w","2","--capture-output","--error-logfile","gunicorn.log","--access-logfile","-", "webapp:app"]
+
+# Note that the gunicorn --preload option has some magic
+CMD ["gunicorn", \
+"-b", "0.0.0.0:8000", \
+"-w","4", \
+"--preload", \
+"--capture-output", \
+"--access-logfile", \
+"/home/vcap/access.log", \
+"webapp:app" \
+]

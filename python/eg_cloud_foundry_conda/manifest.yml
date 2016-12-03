@@ -1,0 +1,11 @@
+---
+applications:
+- name: testapp
+  memory: 2GB
+  #buildpack: git://github.com/ihuston/python-conda-buildpack.git
+  buildpack: https://github.com/cloudfoundry/buildpack-python.git
+  timeout: 180
+  command: python schedule_app.py
+  no-route: true
+  disk_quota: 2048M
+  path: .
