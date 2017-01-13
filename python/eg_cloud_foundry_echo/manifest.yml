@@ -1,0 +1,12 @@
+---
+applications:
+- name: echo
+  memory: 1GB
+  buildpack: python_buildpack
+  #git://github.com/ihuston/python-conda-buildpack.git
+  timeout: 180
+  command: python webapp_echo.py
+  #command: .conda/bin/python webapp.py
+  env:
+    PYTHONPATH: .
+
