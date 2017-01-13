@@ -25,22 +25,20 @@ def removeDuplicateFiles(dirPath) :
 
 
 
-    def makeReleaseDir(dirname) :
+def makeReleaseDir(dirname) :
         release_dir = os.path.join( "release_files",  dirname)
         os.makedirs(release_dir)
         return release_dir
 
+def writeToFile():
+    pid=123123
+    f = open('delme', 'w')
+    f.writelines(str(pid))
+
+writeToFile()
 
 
 
 
-
-
-
-
-
-
-    print(filesWithSizeSorted)
-
-removeDuplicateFiles("C:/tmp/datax-cv/resumes_and_jobs/business_developer_jobs/")
+# removeDuplicateFiles("C:/tmp/datax-cv/resumes_and_jobs/business_developer_jobs/")
 # os.path.getsize('C:\\Python27\\Lib\\genericpath.py')
