@@ -1,7 +1,5 @@
 class Hello {
   var myField : String = "";
-
-
   def this(value : String) = {
     this();
     this.myField = value;
