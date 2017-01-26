@@ -1,5 +1,9 @@
 from time import sleep, time
 from functools import wraps
+
+#############################
+# Method 1 : By Class
+#############################
 class TimeMe(object):
 
     def __init__(self, mess):
@@ -13,6 +17,20 @@ class TimeMe(object):
             print("Elapsed time {0} : {1}".format(self.message, time() - mark))
             return result
         return wrapper
+
+#############################
+# Method 2 : By function
+#############################
+def TimeMeByFuncMethod(function_to_be_decorated):
+    def wrapper0(function_to_be_decorated) :
+        @wraps(function_to_be_decorated)
+        def wrapper(*args, **kwargs):
+            mark = time()
+            result = function_to_be_decorated(*args, **kwargs)
+            print("Elapsed time {0} : {1}".format( "",time() - mark))
+            return result
+        return wrapper
+    return wrapper0
 
 
 if __name__ == "__main__":
