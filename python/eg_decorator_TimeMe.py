@@ -33,8 +33,16 @@ def TimeMeByFuncMethod(mess):
     return wrapper0
 
 
+
+
 if __name__ == "__main__":
 
+    # When decorator is applied with arg,
+    # 1) instantiates with arg, so returns either TimeMe object or TimeMeByFuncMethod's wrapper0
+    # 2) Then calls the output of 1 with the "function to be decorated" to get the final decorated function
+    # Eg :
+    #     ByClass :  tm = TimeMe("xxxx");  final_func = tm(func_tobe_decorated)
+    #     ByMethod : wrapper0 = TimeMeByFuncMethod("xxx"); final_func = wrapper0(func_tob_decorated)
     @TimeMeByFuncMethod("Total time of sleepFunction")
     def sleepFunction():
         """This is a sleep function"""
