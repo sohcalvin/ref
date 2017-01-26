@@ -21,13 +21,13 @@ class TimeMe(object):
 #############################
 # Method 2 : By function
 #############################
-def TimeMeByFuncMethod(function_to_be_decorated):
+def TimeMeByFuncMethod(mess):
     def wrapper0(function_to_be_decorated) :
         @wraps(function_to_be_decorated)
         def wrapper(*args, **kwargs):
             mark = time()
             result = function_to_be_decorated(*args, **kwargs)
-            print("Elapsed time {0} : {1}".format( "",time() - mark))
+            print("Elapsed time {0} : {1}".format( mess,time() - mark))
             return result
         return wrapper
     return wrapper0
@@ -35,7 +35,7 @@ def TimeMeByFuncMethod(function_to_be_decorated):
 
 if __name__ == "__main__":
 
-    @TimeMe("Total time of sleepFunction")
+    @TimeMeByFuncMethod("Total time of sleepFunction")
     def sleepFunction():
         """This is a sleep function"""
         print("Start sleeping")
