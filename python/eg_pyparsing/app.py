@@ -2,8 +2,8 @@ from pyparsing import Word, nums, alphas,originalTextFor,Optional,Combine,Litera
 
 cv_text = open("cv.txt",'r').read();
 first5 =Word(nums,exact=5,asKeyword=True)
-opt_dash = Optional(Literal('-'))
-opt_four = Optional(Word(nums, exact=4, asKeyword=True) )
+# opt_dash = Optional(Literal('-'))
+# opt_four = Optional(Word(nums, exact=4, asKeyword=True) )
 pattern = first5 #+ Optional(Literal('-') + Word(nums, exact=4,asKeyword=True))
 
 result = pattern.scanString(cv_text)
