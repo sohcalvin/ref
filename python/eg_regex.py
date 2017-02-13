@@ -135,7 +135,7 @@ def testOne():
 # testOne()
 
 def testTwo() :
-    s1 = "xNH 12345\n"
+    s1 = "x NH 12345\n"
     res = re.findall(r'\bNH 12345\b', s1)
     print(res)
 
