@@ -60,7 +60,7 @@ class GeoLocation(object) :
                 "latitude" : latitude,
                 "longitude" : longitude,
                 "country" : self.country_code_to_name_lookup.get(country_code),
-                "state_name" : self._stateAbbreviationToName(state)
+                "state_name" : self.resolveStateAbbreviationToName(state)
 
 
             }
@@ -103,7 +103,7 @@ class GeoLocation(object) :
         country_code_or_name = country_code_or_name.upper()
         country_code = self.country_name_to_code_lookup.get(country_code_or_name) if(len(country_code_or_name) != 2) else country_code_or_name # Assume that country_code is always 2 char and no conflict
 
-        state = self._stateNameToAbbreviation(state)
+        state = self.resolveStateNameToAbbreviation(state)
 
         if(city is None and state is None) :
             return self.getLocationsByCountryCode(country_code)
@@ -113,22 +113,29 @@ class GeoLocation(object) :
             return self.getLocationsByCityCountryCode(city, country_code)
         return [ self.location_lookup.get(self._location_string(city, state, country_code)) ]
 
+    def getLatLongListWithDict(self, location_dict):  # {'countryName': 'China', 'subdivision1name': '11', 'cityName': 'Beijing'}
+            
+            self.getLatLongList(location_dict.get("countryName"), state=location_dict.get("subdivision1name"), city=location_dict.get("cityName"))
 
-    def _stateNameToAbbreviation(self, state):
+
+        # {
+        #     "coordinate": {"longitude": -80.2907943725586, "latitude": 25.772714614868164},
+        #     "subdivision1Found": True,
+        #     "cityFound": True,
+        #     "countryFound": True,
+        #     "location": {"subdivision1name": "Florida", "countryName": "United States", "cityName": "Miami"}}
+
+    def resolveStateNameToAbbreviation(self, state):
         if(state is None) : return None
         abbrev =  self.US_STATE_NAME_TO_ABBREVIATION.get(state.upper())
         if(abbrev is not None) : return abbrev
         return state.upper()
 
-    def _stateAbbreviationToName(self, state_abbrev):
+    def resolveStateAbbreviationToName(self, state_abbrev):
         if(state_abbrev is None) : return None
         state_name = self.US_STATE_ABBREV_TO_NAME.get(state_abbrev.upper())
         if(state_name is not None) : return state_name
         return state_abbrev.upper()
-
-
-    def getLatLongListWithDict(self, location_dict):  #  {'countryName': 'China', 'subdivision1name': '11', 'cityName': 'Beijing'}
-        self.getLatLongList(location_dict.get("countryName"), state = location_dict.get("subdivision1name"), city=location_dict.get("cityName"))
 
     def getLocationsByCountryCode(self, country_code):
         return self.country_code_lookup.get(country_code) # list of location_info [ { city + state + country_code + latitude + longitude}]
@@ -204,13 +211,7 @@ class GeoLocation(object) :
 
 
 
-        #
-        # {
-        #     "coordinate": {"longitude": -80.2907943725586, "latitude": 25.772714614868164},
-        #     "subdivision1Found": True,
-        #     "cityFound": True,
-        #     "countryFound": True,
-        #     "location": {"subdivision1name": "Florida", "countryName": "United States", "cityName": "Miami"}}
+
 
 gl = GeoLocation("cities1000.txt", "country_code_capital_mapping.txt")
 xx = gl.getLatLongList("US", state="California")
