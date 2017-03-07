@@ -7,14 +7,14 @@ from geopy.point import Point
 class GeoLocation(object) :
 
     def __init__(self, geo_name_city_file, country_code_mapping_file ):
-        self.location_lookup = {}
-        self.country_code_lookup = {}
-        self.state_country_code_lookup = {}
-        self.city_country_code_lookup = {}
-        self.country_code_to_name_lookup = {}
-        self.country_name_to_code_lookup = {}
-        self.US_STATE_ABBREV_TO_NAME = self.getUSStateAbbreviationMapping()
-        self.US_STATE_NAME_TO_ABBREVIATION = self.getUSStateAbbreviationMapping(reverse=True)
+        self._location_lookup = {}
+        self._country_code_lookup = {}
+        self._state_country_code_lookup = {}
+        self._city_country_code_lookup = {}
+        self._country_code_to_name_lookup = {}
+        self._country_name_to_code_lookup = {}
+        self._US_STATE_ABBREV_TO_NAME = self.getUSStateAbbreviationMapping()
+        self._US_STATE_NAME_TO_ABBREVIATION = self.getUSStateAbbreviationMapping(reverse=True)
         self._initCountryCodeMappingFile(country_code_mapping_file)
         self._initGeoNameCityFile(geo_name_city_file)
 
@@ -27,11 +27,12 @@ class GeoLocation(object) :
             country_code = tokens[0].strip().upper()
             country = tokens[1].strip().upper()
             capital = tokens[2].strip().upper()
-            self.country_code_to_name_lookup[country_code] = country
-            self.country_name_to_code_lookup[country] = country_code
+            self._country_code_to_name_lookup[country_code] = country
+            self._country_name_to_code_lookup[country] = country_code
 
     def _initGeoNameCityFile(self, geo_name_city_file) :
         lines = open(geo_name_city_file, "r", encoding="utf8").readlines()
+
         for l in lines :
             tokens = l.split("\t")
             geonameid         = tokens[0]
@@ -59,63 +60,124 @@ class GeoLocation(object) :
                 "country_code" : country_code,
                 "latitude" : latitude,
                 "longitude" : longitude,
-                "country" : self.country_code_to_name_lookup.get(country_code),
+                "country" : self._country_code_to_name_lookup.get(country_code),
                 "state_name" : self.resolveStateAbbreviationToName(state)
 
 
             }
-            location_string = self._location_string(city, state, country_code)
 
-            state_country_string = self._state_country_code_string(state, country_code)
-            self.location_lookup[location_string] = location_info
-            cc_list = self.country_code_lookup.get(country_code)
+            location_string = self._makeLocationString(city, state, country_code)
+
+            state_country_string = self._makeStateCountryCodeString(state, country_code)
+            self._location_lookup[location_string] = location_info
+            cc_list = self._country_code_lookup.get(country_code)
             if(cc_list is None) :
                 cc_list = []
-                self.country_code_lookup[country_code] = cc_list
+                self._country_code_lookup[country_code] = cc_list
             cc_list.append(location_info)
 
-            scc_list = self.state_country_code_lookup.get(state_country_string)
+            scc_list = self._state_country_code_lookup.get(state_country_string)
             if(scc_list is None) :
                 scc_list = []
-                self.state_country_code_lookup[state_country_string] = scc_list
+                self._state_country_code_lookup[state_country_string] = scc_list
             scc_list.append(location_info)
 
-            city_country_code_string = self._city_country_code_string(city, country_code)
-            ccc_list = self.city_country_code_lookup.get(city_country_code_string)
+            city_country_code_string = self._makeCityCountryCodeString(city, country_code)
+            ccc_list = self._city_country_code_lookup.get(city_country_code_string)
             if(ccc_list is None) :
                 ccc_list=[]
-                self.city_country_code_lookup[city_country_code_string] = ccc_list
+                self._city_country_code_lookup[city_country_code_string] = ccc_list
             ccc_list.append(location_info)
 
-
-
-    def _location_string(self, city, state, country_code):
+    def _makeLocationString(self, city, state, country_code):
         return "{},{},{}".format(city, state, country_code).upper()
 
-    def _state_country_code_string(self, state, country_code):
+    def _makeStateCountryCodeString(self, state, country_code):
         return "{},{}".format(state, country_code).upper()
 
-    def _city_country_code_string(self, city, country_code):
+    def _makeCityCountryCodeString(self, city, country_code):
         return "{},{}".format(city, country_code).upper()
 
     @TimeMe("aaaa")
     def getLatLongList(self, country_code_or_name, state = None,  city= None):
-        country_code_or_name = country_code_or_name.upper()
-        country_code = self.country_name_to_code_lookup.get(country_code_or_name) if(len(country_code_or_name) != 2) else country_code_or_name # Assume that country_code is always 2 char and no conflict
-
-        state = self.resolveStateNameToAbbreviation(state)
-
-        if(city is None and state is None) :
-            return self.getLocationsByCountryCode(country_code)
-        if(city is None) :
-            return self.getLocationsByStateCountryCode(state, country_code)
-        if(state is None) :
-            return self.getLocationsByCityCountryCode(city, country_code)
-        return [ self.location_lookup.get(self._location_string(city, state, country_code)) ]
+        result = []
+        if(city is not None and state is not None) :
+            result = self.getLocationsByCityStateCountry(city, state, country_code_or_name, best_effort=True)
+        elif(city is not None) :
+            result = self.getLocationsByCityCountryCode(city, country_code_or_name)
+        elif(state is not None) :
+            result = self.getLocationsByStateCountryCode(state, country_code_or_name)
+        elif(city is None and state is None) :
+            result = self.getLocationsByCountryCode(country_code_or_name)
+        return result
 
     def getLatLongListWithDict(self, location_dict):  # {'countryName': 'China', 'subdivision1name': '11', 'cityName': 'Beijing'}
-            
-            self.getLatLongList(location_dict.get("countryName"), state=location_dict.get("subdivision1name"), city=location_dict.get("cityName"))
+        return self.getLatLongList(location_dict.get("countryName"), state=location_dict.get("subdivision1name"), city=location_dict.get("cityName"))
+
+
+    # @classmethod
+    # def centerOfPoints(cls, points ):
+    #
+    #     num = len(points)
+    #     if(num ==0) :
+    #         return None
+    #     elif(num ==1 ) :
+    #         return points[0]
+    #     else :
+    #         lats = sorted([p.latitude for p in points])
+    #         lons = sorted([p.longitude for p in points])
+    #         mid_lat = (lats[-1] - lats[0])/2 -3.14
+    #         mid_lon = (lons[-1] - lons[0])/2 -3.14
+    #         return Point(mid_lat, mid_lon)
+
+
+        """
+        http://www.geomidpoint.com/example.html
+        http://gis.stackexchange.com/questions/6025/find-the-centroid-of-a-cluster-of-points
+        """
+        # sum_x, sum_y, sum_z = 0, 0, 0
+        # for p in list_of_lat_long_points:
+        #     lat = p.latitude
+        #     lon = p.longitude
+        #     ## convert lat lon to cartesian coordinates
+        #     sum_x = sum_x + cos(lat) * cos(lon)
+        #     sum_y = sum_y + cos(lat) * sin(lon)
+        #     sum_z = sum_z + sin(lat)
+        # num_points = float(len(list_of_lat_long_points))
+        # avg_x = sum_x / num_points
+        # avg_y = sum_y / num_points
+        # avg_z = sum_z / num_points
+        # center_lon = atan2(avg_y, avg_x)
+        # hyp = sqrt(avg_x * avg_x + avg_y * avg_y)
+        # center_lat = atan2(avg_z, hyp)
+        # return Point(latitude=degrees(center_lat), longitude = degrees(center_lon))
+
+
+    # def getLatLongRegionCenter(self, country_code_or_name, state = None,  city= None):
+    #     locations = self.getLatLongList(country_code_or_name, state, city)
+    #     len_loc = len(locations)
+    #     result = {
+    #         "longitude" : None,
+    #         "latitude" : None
+    #     }
+    #     if(len_loc == 0 ) :
+    #         return {}
+    #     elif(len_loc == 1 ) :
+    #         loc = locations[0]
+    #         return {
+    #             "latitude" : loc.get("latitude"),
+    #             "longitude" : loc.get("longitude")
+    #         }
+    #     else :
+    #         points = [ Point(l.get("latitude"), l.get("longitude"))for l in locations]
+    #         center_point = GeoLocation.centerOfPoints(points)
+    #         return {
+    #             "latitude": center_point.latitude,
+    #             "longitude": center_point.longitude
+    #         }
+
+
+
 
 
         # {
@@ -127,26 +189,45 @@ class GeoLocation(object) :
 
     def resolveStateNameToAbbreviation(self, state):
         if(state is None) : return None
-        abbrev =  self.US_STATE_NAME_TO_ABBREVIATION.get(state.upper())
+        abbrev =  self._US_STATE_NAME_TO_ABBREVIATION.get(state.upper())
         if(abbrev is not None) : return abbrev
         return state.upper()
 
     def resolveStateAbbreviationToName(self, state_abbrev):
         if(state_abbrev is None) : return None
-        state_name = self.US_STATE_ABBREV_TO_NAME.get(state_abbrev.upper())
+        state_name = self._US_STATE_ABBREV_TO_NAME.get(state_abbrev.upper())
         if(state_name is not None) : return state_name
         return state_abbrev.upper()
 
-    def getLocationsByCountryCode(self, country_code):
-        return self.country_code_lookup.get(country_code) # list of location_info [ { city + state + country_code + latitude + longitude}]
+    def resolveCountryNameToCode(self, country_name):
+        country_name = country_name.upper()
+        country_code = self._country_name_to_code_lookup.get(country_name) if (len(country_name) != 2) else country_name  # Assume that country_code is always 2 char and no conflict
+        return country_code
 
-    def getLocationsByStateCountryCode(self, state, country_code):
-        state_country_code_string = self._state_country_code_string(state, country_code)
-        return self.state_country_code_lookup.get(state_country_code_string)  # list of location_info [ { city + state + country_code + latitude + longitude}]
+    def getLocationsByCityStateCountry(self, city, state_or_abbrev, country_code_or_name, best_effort=False):
+        country_code = self.resolveCountryNameToCode(country_code_or_name)
+        state_abbrev = self.resolveStateNameToAbbreviation(state_or_abbrev)
+        loc = self._location_lookup.get(self._makeLocationString(city, state_abbrev, country_code))
+        if (loc is None and best_effort):
+            result = self.getLocationsByCityCountryCode(city, country_code)  # try again by ignoring state
+        else:
+            result = [loc]
+        return result
 
-    def getLocationsByCityCountryCode(self, city, country_code):
-        city_country_code_string = self._city_country_code_string(city, country_code)
-        return self.city_country_code_lookup.get(city_country_code_string)  # list of location_info [ { city + state + country_code + latitude + longitude}]
+    def getLocationsByCountryCode(self, country_code_or_name):
+        country_code = self.resolveCountryNameToCode(country_code_or_name)
+        return self._country_code_lookup.get(country_code) # list of location_info [ { city + state + country_code + latitude + longitude}]
+
+    def getLocationsByStateCountryCode(self, state_or_abbrev, country_code_or_name):
+        country_code = self.resolveCountryNameToCode(country_code_or_name)
+        state = self.resolveStateNameToAbbreviation(state_or_abbrev)
+        state_country_code_string = self._makeStateCountryCodeString(state, country_code)
+        return self._state_country_code_lookup.get(state_country_code_string)  # list of location_info [ { city + state + country_code + latitude + longitude}]
+
+    def getLocationsByCityCountryCode(self, city, country_code_or_name):
+        country_code = self.resolveCountryNameToCode(country_code_or_name)
+        city_country_code_string = self._makeCityCountryCodeString(city, country_code)
+        return self._city_country_code_lookup.get(city_country_code_string)  # list of location_info [ { city + state + country_code + latitude + longitude}]
 
     def getUSStateAbbreviationMapping(self, reverse=False):
         US_STATE_ABBREV = {
@@ -214,8 +295,6 @@ class GeoLocation(object) :
 
 
 gl = GeoLocation("cities1000.txt", "country_code_capital_mapping.txt")
-xx = gl.getLatLongList("US", state="California")
+xx = gl.getLatLongList("MY")
 
-for x in xx :
-    print(x)
-
+print(xx)

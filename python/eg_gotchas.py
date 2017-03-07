@@ -8,4 +8,4 @@ print(somefunc())
 
 print(somefunc(a=["apple "]))
 
-print(somefunc())
+

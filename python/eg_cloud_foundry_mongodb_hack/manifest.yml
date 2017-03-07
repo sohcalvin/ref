@@ -1,6 +1,6 @@
 ---
 applications:
-- name: delme
+- name: delme-pcomcast
   memory: 1GB
   buildpack: python_buildpack
   #git://github.com/ihuston/python-conda-buildpack.git
