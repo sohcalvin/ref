@@ -10,7 +10,7 @@ jobs = db.job.find({"owner" : "api8.successfactors.com"})
 extracted = {}
 i=1;
 for job in jobs :
-   if(i >1) : break
+   # if(i >5000) : break
    job_id = str(job["_id"])
    cv_applied = job["cv_applied"]
    if(cv_applied is None or len(cv_applied) == 0) :
