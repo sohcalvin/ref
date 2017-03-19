@@ -28,7 +28,7 @@ def yEqualXPlus4(x):
     return x + y_intercept
 # functionPlot(yEqualXPlus4)
 
-# 3) logFunc
+# 3) logFunc or sigmoid
 def logFunc(x) :
     return 1/ (1+ math.exp(-x))
 # functionPlot(logFunc)

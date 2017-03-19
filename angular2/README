@@ -1,0 +1,8 @@
+$ npm install -g angular-cli # This gives you the 'ng' cli
+
+$ ng version
+
+$ ng new csoh-app   # create a new dir and generate sample files for csoh-app
+
+$ cd csoh-app
+$ ng serve   # Starts the dev server http://localhost:4200/
