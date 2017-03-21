@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "QuickStart package.json from the documentation, supplemented with testing support",
   "scripts": {
-    "cpx" : "cpx \"src/**/*.{html,png,jpg,js}\" build -w",
+    "echo" : "tsc --version",
+    "cpx" : "cpx \" src/**/*.{html,png,jpg,js}\" build -w",
     "build": "tsc -p src/ --outDir build/",
     "build:watch": "tsc -p src/ -w --outDir build/",
     "build:e2e": "tsc -p e2e/",
