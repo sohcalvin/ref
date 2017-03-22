@@ -12,7 +12,11 @@ def softmax(x_list) :
         results.append(math.exp(x)/sum_exp)
     return results
 
-vals = [-2,-1,0, 1,7,14,15,16]
+# def sigmoid(x):
+#   return 1 / (1 + math.exp(-x))
+
+vals = [0, 1,2,3,4,5,7,14,15,16,100]
+
 softmaxed_vals = softmax(vals)
 print("Orginal list of values    :", vals)
 print("Normalized list of values :", softmaxed_vals)
@@ -27,7 +31,7 @@ plt.text(1, 0.55,'Softmax function for x={}'.format(vals)
 plt.grid(True)
 plt.axhline(0, color='orange') # origin axis line
 plt.axvline(0, color='orange') # origin axis line
-plt.axes([-5,17,0,1])
+plt.axes([-2,16,0,1])
 
     # ,
     #  transform = ax.transAxes)

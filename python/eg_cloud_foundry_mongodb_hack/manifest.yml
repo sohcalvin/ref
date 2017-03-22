@@ -1,6 +1,6 @@
 ---
 applications:
-- name: delme-pcomcast
+- name: delme-us10-acceptance
   memory: 1GB
   buildpack: python_buildpack
   #git://github.com/ihuston/python-conda-buildpack.git
@@ -10,7 +10,7 @@ applications:
   env:
     PYTHONPATH: .
   services:
-    - cvr-mongodb 
+    - cvr-mongodb
 #- name: delme_worker
 #  command: python hello.py
 #  no-route: true
