@@ -18,7 +18,7 @@ export class BackendService {//implements OnInit  {
     //     console.log("OnInit in HttpSerice");
     // }
 
-    getPage(): Observable<JSON[]> {
+    sendCommand(command:String): Observable<JSON[]> {
         console.log("Getting page");
         return this.http.get("t.json")
             .map(response => response.json())

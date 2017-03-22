@@ -1,25 +1,29 @@
 import { Component } from '@angular/core';
-import {BackendService } from './backend.service';
+import { BackendService } from './backend.service';
 
 @Component({
   selector: 'my-app',
-  template: `<h1>Hello {{name}}</h1>
-  <div (click) = "doSomething()">abc</div>
+  template: `
+  <label class="btn btn-primary" (click)="doSomething()">abc</label>
+  <textarea [(ngModel)]="command" class="form-control" rows="5" id="comment"></textarea>
+ 
+  <div><pre>{{output}}</pre></div>
   `
-  
+
 })
 
-export class AppComponent  { 
- 
-  name = 'Angular'; 
-  constructor(private backendService :BackendService){}
+export class AppComponent {
 
-  doSomething( ) :void {
-    console.log("something clicked " + this.backendService);
-    this.backendService.getPage()
-     .subscribe(
-                     json => console.log(json),
-                     error =>  console.log( <any>error));    
+  command: String;
+  output: String;
+  constructor(private backendService: BackendService) { }
+
+  doSomething(): void {
+    console.log("something clicked " + this.command);
+    this.backendService.sendCommand(this.command)
+      .subscribe(
+      json => this.output = json.toString(),
+      error => console.log(<any>error));
   }
 
 }
