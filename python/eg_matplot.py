@@ -31,5 +31,16 @@ def yEqualXPlus4(x):
 # 3) logFunc or sigmoid
 def logFunc(x) :
     return 1/ (1+ math.exp(-x))
-# functionPlot(logFunc)
+
+# 3) logFunc Modified
+def customLogFunc(x) :
+    return 1/ (math.pow(2,x))
+
+# 3) logFunc
+def logFunc2(x) :
+    return 1/ (math.exp(0.1* x))
+
+functionPlot(logFunc2,x_values= np.arange(0,50))
+
+
 
