@@ -2,14 +2,17 @@ from flask import Flask, request
 from flask_restful import Api
 import sys
 from flask_mongoengine import MongoEngine
-from flask_security import Security, MongoEngineUserDatastore, UserMixin, RoleMixin, login_required, auth_token_required, current_user, http_auth_required, utils
+from flask_security import Security, MongoEngineUserDatastore, UserMixin, RoleMixin, current_user, http_auth_required, utils, roles_required
 app = Flask(__name__)
 api = Api(app)
+
+ADMIN_ROLE = "admin"
 
 def configureSecurityMongoDb(app) :
     app.config['DEBUG'] = True
     app.config['SECRET_KEY'] = 'super-secret'
     app.config['SECURITY_REGISTERABLE'] = False
+    app.config['SECURITY_CHANGEABLE'] = True
     app.config['SECURITY_PASSWORD_HASH'] = 'bcrypt'
     app.config['SECURITY_PASSWORD_SALT'] = 'saltit'
     # app.config['WTF_CSRF_ENABLED'] = False
@@ -39,22 +42,24 @@ security = Security(app, user_datastore)
 
 @app.before_first_request
 def initAdminUser() :
-    role = user_datastore.find_role("admin")
+    role = user_datastore.find_role(ADMIN_ROLE)
     if(role is None) :
-        user_datastore.create_role(name="admin", description="Administrator")
+        user_datastore.create_role(name=ADMIN_ROLE, description="Administrator")
 
     user = user_datastore.find_user(email="su@admin")
     if(user is None) :
         encrypted_password = utils.encrypt_password('changeit')
-        user_datastore.create_user(name="superuser", email="su@admin", password=encrypted_password, roles=["admin"])
+        user_datastore.create_user(name="superuser", email="su@admin", password=encrypted_password, roles=[ADMIN_ROLE])
 
 @app.route('/apchange', methods=['POST'])
+@http_auth_required
+@roles_required(ADMIN_ROLE)
 def adminChangePassword():
         new_pass = utils.encrypt_password(request.form.get("pass"))
-        user = user_datastore.get_user("su@admin")
+        user = user_datastore.get_user(current_user.email)
         user.password = new_pass
-        # user_datastore.s
-        return "home success ", 200
+        user_datastore.put(user)
+        return "Password changed", 200
 
 
 #############################
