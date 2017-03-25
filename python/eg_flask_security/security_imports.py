@@ -1,6 +1,6 @@
 from flask import request
 from flask_mongoengine import MongoEngine
-from flask_security import Security, MongoEngineUserDatastore, UserMixin, RoleMixin, utils, roles_required, http_auth_required, current_user
+from flask_security import Security, MongoEngineUserDatastore, UserMixin, RoleMixin, utils, roles_accepted, roles_required, http_auth_required, current_user, login_required
 ADMIN_ROLE = "admin"
 
 def initAdminUser(user_datastore) :
@@ -8,20 +8,42 @@ def initAdminUser(user_datastore) :
     if(role is None) :
         print("Initializing admin role")
         user_datastore.create_role(name=ADMIN_ROLE, description="Administrator")
-
-    user = user_datastore.find_user(email="su@admin")
+    admin_email = "su@admin.com"
+    user = user_datastore.find_user(email=admin_email)
     if(user is None) :
         print("Initializing admin user")
         encrypted_password = utils.encrypt_password('changeit')
-        user_datastore.create_user(name="superuser", email="su@admin", password=encrypted_password, roles=[ADMIN_ROLE])
+        user_datastore.create_user(name="superuser", email=admin_email, password=encrypted_password, roles=[ADMIN_ROLE])
 
-def setupRoleManagementEndpoints(app) :
-    @app.route("/addrole", methods=['GET', 'POST'])
-    @roles_required(ADMIN_ROLE)
+def setupRoleManagementEndpoints(app, user_datastore) :
+    @app.route("/user/addrole", methods=['PUT'])
     @http_auth_required
-    def addRole():
+    @roles_required(ADMIN_ROLE)
+    def addUserRole():
+        target_user = request.form["user"]
+        role_to_set = request.form["role"]
+        user_datastore.add_role_to_user(target_user,role_to_set)
+        return "Added role '{}' to '{}'".format(role_to_set, target_user), 200
 
-        return "Added role", 200
+    @app.route("/user/removerole", methods=['PUT'])
+    @http_auth_required
+    @roles_required(ADMIN_ROLE)
+    def removeUserRole():
+        target_user = request.form["user"]
+        role_to_remove = request.form["role"]
+        user_datastore.remove_role_from_user(target_user,role_to_remove)
+        return "Removed role '{}' from '{}'".format(role_to_remove, target_user), 200
+
+    @app.route("/user/delete", methods=['PUT'])
+    @http_auth_required
+    @roles_required(ADMIN_ROLE)
+    def deleteUser():
+        target_user = request.form["user"]
+        user_datastore.delete_user(user_datastore.get_user(target_user))
+        return "Deleted user '{}'".format( target_user), 200
+
+
+
 
 
 def configureSecurityMongoDb(app) :
@@ -29,10 +51,13 @@ def configureSecurityMongoDb(app) :
         print("Configuring security setup with mongodb")
         app.config['DEBUG'] = True
         app.config['SECRET_KEY'] = 'super-secret'
-        app.config['SECURITY_REGISTERABLE'] = False
-        app.config['SECURITY_CHANGEABLE'] = True
         app.config['SECURITY_PASSWORD_HASH'] = 'bcrypt'
         app.config['SECURITY_PASSWORD_SALT'] = 'saltit'
+        # Default views
+        app.config['SECURITY_SEND_REGISTER_EMAIL'] = False
+        app.config['SECURITY_SEND_PASSWORD_CHANGE_EMAIL'] = False
+        app.config['SECURITY_REGISTERABLE'] = True
+        app.config['SECURITY_CHANGEABLE'] = True
         # app.config['WTF_CSRF_ENABLED'] = False
         # app.config['SECURITY_LOGIN_URL'] = '/testlogin'
         # MongoDB Config
@@ -58,7 +83,7 @@ def configureSecurityMongoDb(app) :
         security = Security(app, user_datastore)
 
         initAdminUser(user_datastore)
-        setupRoleManagementEndpoints(app)
+        setupRoleManagementEndpoints(app, user_datastore)
 
 
         return db, user_datastore, security
