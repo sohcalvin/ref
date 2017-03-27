@@ -46,7 +46,7 @@ def setupRoleManagementEndpoints(app, user_datastore) :
 
 
 
-def configureSecurityMongoDb(app) :
+def configureSecurityMongoDb(app, mongo_db=None) :
     with app.app_context() :
         print("Configuring security setup with mongodb")
         app.config['DEBUG'] = True
@@ -61,9 +61,10 @@ def configureSecurityMongoDb(app) :
         # app.config['WTF_CSRF_ENABLED'] = False
         # app.config['SECURITY_LOGIN_URL'] = '/testlogin'
         # MongoDB Config
-        app.config['MONGODB_DB'] = 'csoh_db'
-        app.config['MONGODB_HOST'] = 'localhost'
-        app.config['MONGODB_PORT'] = 27017
+        # app.config['MONGODB_DB'] = 'csoh_db'
+        # app.config['MONGODB_HOST'] = 'localhost'
+        app.config['MONGODB_HOST'] = "mongodb://localhost:27017/csoh_db"
+
         db = MongoEngine(app)
 
         class Role(db.Document, RoleMixin):
