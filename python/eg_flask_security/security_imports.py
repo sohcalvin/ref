@@ -3,6 +3,12 @@ from flask_mongoengine import MongoEngine
 from flask_security import Security, MongoEngineUserDatastore, UserMixin, RoleMixin, utils, roles_accepted, roles_required, http_auth_required, current_user, login_required
 ADMIN_ROLE = "admin"
 
+DEFAULT_MONGODB_URI = "mongodb://localhost:27017/user_db"
+
+
+def makeMongodbUri(db_name, server="localhost", port ="27017"):
+    return "mongodb://{}:{}/{}".format(server, port, db_name)
+
 def initAdminUser(user_datastore) :
     role = user_datastore.find_role(ADMIN_ROLE)
     if(role is None) :
@@ -42,11 +48,19 @@ def setupRoleManagementEndpoints(app, user_datastore) :
         user_datastore.delete_user(user_datastore.get_user(target_user))
         return "Deleted user '{}'".format( target_user), 200
 
+    # Supporting default template SECURITY_POST_LOGIN_VIEW
+    @app.route("/user/loginok", methods=['GET'])
+    @login_required
+    def loginOk():
+        return "Welcome back '{}'".format(current_user.email), 200
+
+    @app.route("/user/registerok", methods=['GET'])
+    @login_required
+    def registerOk():
+        return "Registration successful. Welcome '{}'".format(current_user.email), 200
 
 
-
-
-def configureSecurityMongoDb(app, mongo_db=None) :
+def configureSecurityMongoDb(app, user_mongodb_uri=None) :
     with app.app_context() :
         print("Configuring security setup with mongodb")
         app.config['DEBUG'] = True
@@ -58,12 +72,18 @@ def configureSecurityMongoDb(app, mongo_db=None) :
         app.config['SECURITY_SEND_PASSWORD_CHANGE_EMAIL'] = False
         app.config['SECURITY_REGISTERABLE'] = True
         app.config['SECURITY_CHANGEABLE'] = True
+
+        app.config['SECURITY_POST_LOGIN_VIEW'] = "/user/loginok"
+        app.config['SECURITY_POST_REGISTER_VIEW'] = "/user/registerok"
+
         # app.config['WTF_CSRF_ENABLED'] = False
         # app.config['SECURITY_LOGIN_URL'] = '/testlogin'
         # MongoDB Config
         # app.config['MONGODB_DB'] = 'csoh_db'
         # app.config['MONGODB_HOST'] = 'localhost'
-        app.config['MONGODB_HOST'] = "mongodb://localhost:27017/csoh_db"
+        user_mongodb_uri = DEFAULT_MONGODB_URI if (user_mongodb_uri is None) else user_mongodb_uri
+        print("Using '{}' as user mongo db".format(user_mongodb_uri))
+        app.config['MONGODB_HOST'] = user_mongodb_uri
 
         db = MongoEngine(app)
 
