@@ -1,0 +1,15 @@
+$  npm install -g @angular/cli  # this gives you the  'ng' cli
+$ ng version
+
+$ ng new csoh-app   # create a new dir and generate sample files for csoh-app
+
+$ cd csoh-app
+$ ng serve   # Starts the dev server http://localhost:4200/
+
+
+Note that config file that "ng" uses is ".angular-cli.json"
+
+## To add bootstrap ###################################
+https://github.com/angular/angular-cli/wiki/stories-include-bootstrap
+** remember to restart ng serve ***
+##############################################
