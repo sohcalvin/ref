@@ -2,10 +2,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
-import { RouterModule, Routes } from '@angular/router'
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 
 const appRoutes: Routes = [
   { path: 'dashboard', component: DashboardComponent }
@@ -15,27 +16,32 @@ const appRoutes: Routes = [
   //   component: HeroListComponent,
   //   data: { title: 'Heroes List' }
   // },
-  // { path: '',
+  // ,{ path: '',
   //   redirectTo: '/heroes',
   //   pathMatch: 'full'
-  // },
-  // { path: '**', component: PageNotFoundComponent }
+  // }
+  ,{ path: '',
+    component: PageNotFoundComponent
+  }
+  ,{ path: '**', component: PageNotFoundComponent }
 ];
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardComponent
+    DashboardComponent,
+    PageNotFoundComponent
   ],
   imports: [
      BrowserModule
     ,FormsModule
     ,HttpModule
-    ,RouterModule.forRoot(appRoutes)     
+    ,RouterModule.forRoot(appRoutes)    
+    
    
   ],
-  providers: [],
+  providers: [ ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
