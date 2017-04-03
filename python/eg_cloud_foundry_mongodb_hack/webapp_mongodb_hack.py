@@ -1,53 +1,28 @@
 from flask import Flask, request
 from flask_security import login_required, http_auth_required, roles_required
-import os
 import io
 import subprocess
-
-from pymongo import MongoClient
 import json
-app = Flask(__name__)
-
+from pymongo import MongoClient
+from cloudfoundry_util import getMongodbUriFromCloudfoundryEnv
 from security_imports import configureSecurityMongoDb, DEFAULT_MONGODB_URI, ADMIN_ROLE, makeMongodbUri
 
-def getMongodbListUriFromCloudfoundryEnv() :
-    env_config = os.environ.get('VCAP_SERVICES')
-    mongodb_uri = []
-    if env_config:
-        vcapJsonObj = json.loads(env_config)
+app = Flask(__name__)
 
-        for c in [ 'mongodb', 'user-provided'] :
-            if(c in vcapJsonObj):
-                config_list = vcapJsonObj[c]
-                for i in config_list :
-                    uri = i['credentials']['uri']
-                    mongodb_uri.append(uri)
-                    # mongodb_clients.append(MongoClient(uri).get_default_database())
-                break # Only do one
-    return mongodb_uri
-        #
-        # mongo_config = vcapJsonObj['mongodb']
-        # mongodb_list = []
-        # if('mongodb' in vcapJsonObj):
-        #     uri = vcapJsonObj['mongodb'][0]['credentials']['uri']
-        # elif('user-provided' in vcapJsonObj) :
-        #     uri = vcapJsonObj['user-provided'][0]['credentials']['uri']
-    # return MongoClient(uri).get_default_database()
+dbname2uri_map = getMongodbUriFromCloudfoundryEnv()
+USERDB_URI = dbname2uri_map.get("admin-mongodb")
+CVRDB_URI = dbname2uri_map.get("cvr-mongodb")
 
-def isCloudFoundryEnv(uri_list) :
-    return True if (len(uri_list) == 2) else False
-
-uri_list = getMongodbListUriFromCloudfoundryEnv()
-if(isCloudFoundryEnv(uri_list)) :
-    userdb_uri  = uri_list[0]
-    cvr_uri     = uri_list[1]
+if(USERDB_URI is None or CVRDB_URI is None) :
+    print("Running in Local enviroment due to cloudfoundry mongodb not found in VCAP_SERVICES environment")
+    USERDB_URI = None
+    CVRDB_URI = makeMongodbUri("cvr_db")
 else :
-    userdb_uri = None
-    cvr_uri = makeMongodbUri("cvr_db")
+    print("Running in Cloud Foundry enviroment")
 
-configureSecurityMongoDb(app, user_mongodb_uri=userdb_uri)
+configureSecurityMongoDb(app, user_mongodb_uri=USERDB_URI)
 
-db1 = MongoClient(cvr_uri).get_default_database()
+db1 = MongoClient(CVRDB_URI).get_default_database()
 
 @app.route('/mongo', methods = ['POST', 'GET'])
 @http_auth_required
@@ -69,14 +44,13 @@ def mongo():
     exec(cmd)
     return "{0}".format(buffer.getvalue()), 200
 
-
 @app.route('/summary', methods = ['GET'])
 @http_auth_required
 @roles_required(ADMIN_ROLE)
 def summary():
     import sys
     jobs_cnt = db1.job.find().count()
-    cv_cnt = db1.job.find().count()
+    cv_cnt = db1.cv.find().count()
     distinct_owner = db1.job.distinct("owner")
     distinct_organization = db1.job.distinct("organization")
     b = "<br>"
@@ -96,7 +70,11 @@ def summary():
         resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Organization", o)
         resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs", db1.job.find({"organization" : o }).count())
         resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs - active",db1.job.find({"organization": o, "active" : True }).count() )
-        resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs - active with cvs", db1.job.find({"organization": o, "active": True, 'cv_ids': {'$exists': True}, "$where": "this.cv_ids.length > 0"}).count())
+        # resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs - active with cvs", db1.job.find({"organization": o, "active": True, 'cv_ids': {'$exists': True}, "$where": "this.cv_ids.length > 0"}).count())
+        resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs - active with cvs", db1.job.find(
+            {"organization": o, "active": True, 'cv_ids': {'$exists': True, '$ne': []}}).count())
+
+
         resp += "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td></td></tr>"
         resp += "</table>"
         resp += "<hr>"

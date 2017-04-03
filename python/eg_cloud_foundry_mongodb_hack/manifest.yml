@@ -1,6 +1,6 @@
 ---
 applications:
-- name: delme-us10-acceptance
+- name: delme-nydemo
   memory: 1GB
   buildpack: python_buildpack
   #git://github.com/ihuston/python-conda-buildpack.git
@@ -10,6 +10,7 @@ applications:
   env:
     PYTHONPATH: .
   services:
+    - admin-mongodb
     - cvr-mongodb
 #- name: delme_worker
 #  command: python hello.py
