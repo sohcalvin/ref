@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_security import login_required, http_auth_required, roles_required
 import io
+import os
 import subprocess
 import json
 from pymongo import MongoClient
@@ -21,7 +22,6 @@ else :
     print("Running in Cloud Foundry enviroment")
 
 configureSecurityMongoDb(app, user_mongodb_uri=USERDB_URI)
-
 db1 = MongoClient(CVRDB_URI).get_default_database()
 
 @app.route('/mongo', methods = ['POST', 'GET'])
@@ -70,17 +70,14 @@ def summary():
         resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Organization", o)
         resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs", db1.job.find({"organization" : o }).count())
         resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs - active",db1.job.find({"organization": o, "active" : True }).count() )
-        # resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs - active with cvs", db1.job.find({"organization": o, "active": True, 'cv_ids': {'$exists': True}, "$where": "this.cv_ids.length > 0"}).count())
         resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs - active with cvs", db1.job.find(
             {"organization": o, "active": True, 'cv_ids': {'$exists': True, '$ne': []}}).count())
-
 
         resp += "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td></td></tr>"
         resp += "</table>"
         resp += "<hr>"
     resp += b
     return "<html>{}</html>".format(resp), 200
-
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 9099))
