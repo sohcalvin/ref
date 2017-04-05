@@ -7,15 +7,22 @@ import { HttpDataService } from '../http-data.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
+  
+  private data:JSON[] = [];
 
   constructor(private httpDataService : HttpDataService) { }
 
   ngOnInit() {
   	this.httpDataService.getDbInfo()
   	.subscribe(
-      // json => this.output = json.toString(),
-      json => console.log(json.toString()),
+      this.setData ,
+      // json => console.log(json.toString()),
       error => console.log(<any>error));
+  }
+
+  setData(jsonList) {
+  	this.data = jsonList;
+  	console.log(this.data);
   }
 
 }
