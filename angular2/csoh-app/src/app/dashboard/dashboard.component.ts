@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HttpDataService } from '../http-data.service';
+
 
 @Component({
   selector: 'app-dashboard',
@@ -8,21 +9,24 @@ import { HttpDataService } from '../http-data.service';
 })
 export class DashboardComponent implements OnInit {
   
-  private data:JSON[] = [];
-
-  constructor(private httpDataService : HttpDataService) { }
+  private data = {"by_tenant" : []}; 
+  private by_tenant = [];
+  constructor(private httpDataService : HttpDataService
+  	, public changeDetector : ChangeDetectorRef ) { }
 
   ngOnInit() {
   	this.httpDataService.getDbInfo()
   	.subscribe(
-      this.setData ,
-      // json => console.log(json.toString()),
+      this._setData ,
       error => console.log(<any>error));
   }
 
-  setData(jsonList) {
-  	this.data = jsonList;
-  	console.log(this.data);
+  _setData(json) {
+  	
+  	this.data = json;
+  	this.by_tenant = json.by_tenant;
+  	// this.changeDetector.detectChanges();
+  	console.log(this.by_tenant + "<<<<<");
   }
 
 }

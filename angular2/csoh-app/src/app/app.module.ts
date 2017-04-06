@@ -7,7 +7,8 @@ import { AppRoutingModule} from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
-import { HttpDataService } from './http-data.service'
+import { HttpDataService } from './http-data.service';
+;
 
 @NgModule({
   declarations: [
