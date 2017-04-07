@@ -9,24 +9,23 @@ import { HttpDataService } from '../http-data.service';
 })
 export class DashboardComponent implements OnInit {
   
-  private data = {"by_tenant" : []}; 
-  private by_tenant = [];
-  constructor(private httpDataService : HttpDataService
-  	, public changeDetector : ChangeDetectorRef ) { }
+  private data = undefined; 
 
-  ngOnInit() {
+  constructor(private httpDataService : HttpDataService
+  	, private changeDetector : ChangeDetectorRef ) { }
+
+  ngOnInit(){
+  	this.refresh();
+  }
+
+  refresh() {
   	this.httpDataService.getDbInfo()
   	.subscribe(
-      this._setData ,
-      error => console.log(<any>error));
+      	j => this.data = j
+      ,error => console.log(<any>error));
   }
 
-  _setData(json) {
-  	
-  	this.data = json;
-  	this.by_tenant = json.by_tenant;
-  	// this.changeDetector.detectChanges();
-  	console.log(this.by_tenant + "<<<<<");
-  }
+ 
+
 
 }

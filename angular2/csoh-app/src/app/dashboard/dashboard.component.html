@@ -1,6 +1,13 @@
-<li *ngFor="let item of by_tenant" >
-	abc
-</li>
+<div *ngIf="data">
+<li *ngFor="let item of data.by_tenant" >
+	{{item.name}} -- {{item.job_count}}
+</div>
+<button (click)="refresh()">
+xxx
+</button>
+
+
+
 <pre>
   dashboard works!
 
