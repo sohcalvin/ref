@@ -1,0 +1,13 @@
+
+<table class="table">
+		<thead>
+	        <tr >
+	        	<th *ngFor="let k of tableData.keys">{{k}}</th>
+	        </tr>
+    	</thead>
+    	<tbody>
+		<tr  *ngFor="let row of tableData.data" >
+			<td *ngFor="let k of tableData.keys">{{row[k]}}</td>
+		</tr>
+		</tbody>
+</table>

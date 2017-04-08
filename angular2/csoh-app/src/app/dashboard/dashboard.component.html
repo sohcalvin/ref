@@ -1,11 +1,16 @@
-<div *ngIf="data">
-<li *ngFor="let item of data.by_tenant" >
-	{{item.name}} -- {{item.job_count}}
-</div>
-<button (click)="refresh()">
-xxx
-</button>
+<!-- <div *ngIf="data">
+		<li *ngFor="let item of data.by_tenant" >
+			{{item.name}} -- {{item.job_count}}
+		</li>
+</div> -->
 
+<button (click)="refresh()">
+refresh
+</button>
+<div *ngIf="data">
+	<ctable	[tableData] = "data.by_tenant">
+ </ctable>
+</div>
 
 
 <pre>
