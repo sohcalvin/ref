@@ -1,8 +1,9 @@
 {
 	"message" : "hello",
-	"keys"  : ["name", "job_count"],
 	"by_tenant" : {
-		"keys" : ["job_count", "name"],
+		"table_title" : "Summary by tenant",
+		"header_labels" : [],
+		"header_keys" : ["job_count", "name"],
 		"data" : [
 				{
 					"name" : "tenant1",
