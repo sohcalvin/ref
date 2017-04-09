@@ -1,9 +1,9 @@
 
 
-<div>
+<div class="table_title">
 		{{tableData.table_title}}
 </div>
-<table class="table">
+<table  [ngClass] = "tableStyleClasses">
 		<thead>
 	        <tr >
 	        	<th *ngFor="let label of tableData.header_labels">{{label}}</th>
