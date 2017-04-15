@@ -1,7 +1,7 @@
 {
 	"message" : "hello",
 	"by_tenant" : {
-		"table_title" : "Summary by tenant",
+		"title" : "Summary by tenant",
 		"header_labels" : [ "Tenant", "Jobs"],
 		"header_keys" : ["name", "job_count"],
 		"data" : [
@@ -14,7 +14,44 @@
 					"job_count" : 20
 				}
 			]
-	}
+	},
+	"sections" : [
+		{
+				"id" : "ten1",
+				"title" : "Tenant1",
+				"xxxheader_labels" : ["Property", "Value" ],
+				"header_keys" : ["property", "value"],
+				"data" : [
+					{
+						"property" : "Job count",
+						"value" : "10"
+					},
+					{
+						"property" : "CV count",
+						"value" : "30"
+					}
+				]
+
+		},
+		{
+				"id" : "ten1",
+				"title" : "Tenant2",
+				"xxxheader_labels" : ["Property", "Value" ],
+				"header_keys" : ["property", "value"],
+				"data" : [
+					{
+						"property" : "Job count",
+						"value" : "10"
+					},
+					{
+						"property" : "CV count",
+						"value" : "30"
+					}
+				]
+
+		}
+	]
+
 
 	
 

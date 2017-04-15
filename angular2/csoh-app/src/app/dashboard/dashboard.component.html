@@ -2,44 +2,20 @@
 <button (click)="refresh()">
 refresh
 </button>
+<br> ######## Example of usage by Grid type table : ############ <br><br>
 <div *ngIf="data">
-	<ctable	[tableData] = "data.by_tenant" [tableStyleClasses]="['table', 'table-striped']" >
+ <ctable	[tableData] = "data.by_tenant" [tableStyleClasses]="['table', 'table-striped']" >
  </ctable>
+ 
 </div>
 
 
-<pre>
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
-dashboard works!
+<br> ######## Example of usage by Property-Value type table : ########## <br><br>
+<div *ngIf="data" >
+	<div  *ngFor="let asection of data.sections">
+ 		<ctable	[tableData] = "asection"  >
+  		</ctable> 
+  	</div>
+</div>
 
 
-  
-</pre>

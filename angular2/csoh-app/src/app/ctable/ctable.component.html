@@ -1,17 +1,18 @@
 
-
-<div class="table_title">
-		{{tableData.table_title}}
+<div id = "{{tableData.id}}">
+	<div class="table_title">
+			{{tableData.title}}
+	</div>
+	<table  [ngClass] = "tableStyleClasses">
+			<thead *ngIf="tableData.header_labels">
+		        <tr >
+		        	<th *ngFor="let label of tableData.header_labels">{{label}}</th>
+		        </tr>
+	    	</thead>
+	    	<tbody>
+			<tr  *ngFor="let row of tableData.data" >
+				<td *ngFor="let k of tableData.header_keys">{{row[k]}}</td>
+			</tr>
+			</tbody>
+	</table>
 </div>
-<table  [ngClass] = "tableStyleClasses">
-		<thead>
-	        <tr >
-	        	<th *ngFor="let label of tableData.header_labels">{{label}}</th>
-	        </tr>
-    	</thead>
-    	<tbody>
-		<tr  *ngFor="let row of tableData.data" >
-			<td *ngFor="let k of tableData.header_keys">{{row[k]}}</td>
-		</tr>
-		</tbody>
-</table>
