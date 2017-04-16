@@ -8,7 +8,9 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class CtableComponent implements OnInit {
 	@Input() tableData: any=[];
-	@Input() tableStyleClasses = ['table'];
+	@Input() tableStyle = ['table'];
+	@Input() columnStyle=[];
+
   	constructor() { }
 
   	ngOnInit() {

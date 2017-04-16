@@ -3,10 +3,12 @@
 	<div class="table_title">
 			{{tableData.title}}
 	</div>
-	<table  [ngClass] = "tableStyleClasses">
-			<thead *ngIf="tableData.header_labels">
-		        <tr >
-		        	<th *ngFor="let label of tableData.header_labels">{{label}}</th>
+	<table  [ngClass] = "tableStyle">
+			<thead>
+		        <tr>
+		        	<th *ngFor="let label of tableData.header_labels; let i = index"
+		        		[ngClass] = "columnStyle[i]"
+		        	>{{label}}</th>
 		        </tr>
 	    	</thead>
 	    	<tbody>
@@ -15,4 +17,24 @@
 			</tr>
 			</tbody>
 	</table>
+
+
+<!-- <table>
+  <thead>
+  	<tr>
+  	<th class="col-xs-1" style="background-color: red">aaa</th>
+  	<th class="col-xs-3" style="background-color: green">bbb</th>
+  	<th class="col-xs-8" style="background-color: blue">bbb</th>
+  	</tr>
+  </thead>
+  <tbody>
+			<tr>
+				<td>dataA</td>
+				<td>dataB</td>
+				<td>dataC</td>
+			</tr>
+  </tbody>
+
+</table> -->
+
 </div>

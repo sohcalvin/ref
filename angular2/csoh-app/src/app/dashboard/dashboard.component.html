@@ -4,7 +4,11 @@ refresh
 </button>
 <br> ######## Example of usage by Grid type table : ############ <br><br>
 <div *ngIf="data">
- <ctable	[tableData] = "data.by_tenant" [tableStyleClasses]="['table', 'table-striped']" >
+ <ctable	
+ 	[tableData] = "data.by_tenant" 
+ 	[tableStyle]="['table', 'table-striped']" 
+ 	[columnStyle]="['col-xs-3','col-xs-9']"
+ 	>
  </ctable>
  
 </div>
