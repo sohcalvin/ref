@@ -19,7 +19,7 @@
 		{
 				"id" : "ten1",
 				"title" : "Tenant1",
-				"xxxheader_labels" : ["Property", "Value" ],
+				"xxheader_labels" : ["Property", "Value" ],
 				"header_keys" : ["property", "value"],
 				"data" : [
 					{

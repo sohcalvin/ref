@@ -10,7 +10,6 @@ export class HttpDataService {
   constructor(private http : Http) { }
 
   public getDbInfo() : Observable<JSON[]>{
-  	// console.log("getDbInfo" + this.http);
   	return this.http.get("assets/t.json")
             .map(response => response.json())
             .catch(this.handleError);

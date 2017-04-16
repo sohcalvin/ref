@@ -1,25 +1,27 @@
 
 <div id = "{{tableData.id}}">
 	<div class="table_title">
-			{{tableData.title}}
+			{{title}}
 	</div>
 	<table  [ngClass] = "tableStyle">
 			<thead>
 		        <tr>
-		        	<th *ngFor="let label of tableData.header_labels; let i = index"
+		        	<th *ngFor="let label of header_labels; let i = index"
+		   
 		        		[ngClass] = "columnStyle[i]"
+
 		        	>{{label}}</th>
 		        </tr>
 	    	</thead>
 	    	<tbody>
-			<tr  *ngFor="let row of tableData.data" >
-				<td *ngFor="let k of tableData.header_keys">{{row[k]}}</td>
+			<tr  *ngFor="let row of data" >
+				<td *ngFor="let k of header_keys">{{row[k]}}</td>
 			</tr>
 			</tbody>
 	</table>
 
-
-<!-- <table>
+<!-- 
+<table>
   <thead>
   	<tr>
   	<th class="col-xs-1" style="background-color: red">aaa</th>
@@ -36,5 +38,6 @@
   </tbody>
 
 </table> -->
+
 
 </div>
