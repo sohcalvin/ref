@@ -34,7 +34,7 @@
 
 		},
 		{
-				"id" : "ten1",
+				"id" : "ten2",
 				"title" : "Tenant2",
 				"xxxheader_labels" : ["Property", "Value" ],
 				"header_keys" : ["property", "value"],

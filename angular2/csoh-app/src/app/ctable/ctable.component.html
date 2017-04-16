@@ -6,38 +6,45 @@
 	<table  [ngClass] = "tableStyle">
 			<thead>
 		        <tr>
-		        	<th *ngFor="let label of header_labels; let i = index"
-		   
-		        		[ngClass] = "columnStyle[i]"
-
-		        	>{{label}}</th>
+		        	<th *ngFor='let label of header_labels' style='border-bottom: 0px'>
+		        	{{label}}</th>
 		        </tr>
 	    	</thead>
 	    	<tbody>
+	    	<tr style='height:0px'>
+	    		<td *ngFor="let cs of columnStyle" [ngClass]="cs" style='padding:0'></td>
+	    	</tr>
 			<tr  *ngFor="let row of data" >
-				<td *ngFor="let k of header_keys">{{row[k]}}</td>
+				<td *ngFor='let k of header_keys; let i=index'>
+				<div ngClass="col_{{i}}">{{row[k]}}</div>
+				</td>
 			</tr>
 			</tbody>
 	</table>
 
 <!-- 
-<table>
+<table class="table table-bordered">
   <thead>
   	<tr>
-  	<th class="col-xs-1" style="background-color: red">aaa</th>
-  	<th class="col-xs-3" style="background-color: green">bbb</th>
-  	<th class="col-xs-8" style="background-color: blue">bbb</th>
+	  	<th style="background-color: red">aaa</th>
+	  	<th style="background-color: green">bbb</th>
+	  	<th  style="background-color: blue">bbb</th>
   	</tr>
+
   </thead>
   <tbody>
+  		<tr style="height:0px"> 
+			<td class="col-xs-1" style="background-color: red;padding:0"></td>
+		  	<td class="col-xs-3" style="background-color: green;padding: 0"></td>
+		  	<td class="col-xs-8" style="background-color: blue;padding: 0"></td>
+  		</tr>
 			<tr>
 				<td>dataA</td>
 				<td>dataB</td>
 				<td>dataC</td>
 			</tr>
   </tbody>
-
-</table> -->
-
+</table>
+ -->
 
 </div>

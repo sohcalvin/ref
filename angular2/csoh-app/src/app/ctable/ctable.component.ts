@@ -17,8 +17,6 @@ export class CtableComponent implements OnInit,OnChanges {
 	header_keys : String[];
 	data : any[];
 
-
-
   	constructor() { }
 
   	ngOnInit() {
@@ -29,17 +27,6 @@ export class CtableComponent implements OnInit,OnChanges {
   		this.header_labels = this.tableData['header_labels']? this.tableData['header_labels']: [];
   		this.header_keys = this.tableData['header_keys'];
   		this.data =  this.tableData['data'];
-
-  		var numCol = (this.header_labels.length > this.columnStyle.length) ? this.header_labels.length : this.columnStyle.length;
-  		for(var i =0 ; i < numCol; i++){
-  			if(!this.header_labels[i]){
-  				this.header_labels.push("");
-  			}
-  			if(!this.columnStyle[i]){
-  				this.columnStyle.push("col-xs-1");
-  			}
-
-  		}
   	}
 
 
