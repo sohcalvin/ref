@@ -6,7 +6,7 @@ refresh
 <div *ngIf="data">
  <ctable	
  	[tableData] = "data.by_tenant" 
- 	[tableStyle]="['table', 'table-striped']" 
+ 	[tableStyle]="['table', 'table-bordered']" 
  	[columnStyle]="['col-xs-3','col-xs-9']"
  	>
  </ctable>
@@ -17,7 +17,7 @@ refresh
 <div *ngIf="data"  class="col-xs-8">
 	<div  *ngFor="let asection of data.sections">
  		<ctable	[tableData] = "asection"
- 				[tableStyle]="['table', 'table-bordered']"
+ 				[tableStyle]="['table', 'table-striped']"
  				[columnStyle]="['col-xs-3','col-xs-5']"
  		>
   		</ctable> 

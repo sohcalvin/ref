@@ -9,6 +9,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { HttpDataService } from './http-data.service';
 import { CtableComponent } from './ctable/ctable.component';
+import { UserFormComponent } from './user-form/user-form.component';
 ;
 
 @NgModule({
@@ -16,7 +17,8 @@ import { CtableComponent } from './ctable/ctable.component';
     AppComponent,
     DashboardComponent,
     PageNotFoundComponent,
-    CtableComponent
+    CtableComponent,
+    UserFormComponent
   ],
   imports: [
      BrowserModule
