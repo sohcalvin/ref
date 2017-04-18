@@ -22,7 +22,7 @@ else :
     print("Running in Cloud Foundry enviroment")
 
 configureSecurityMongoDb(app, user_mongodb_uri=USERDB_URI)
-db1 = MongoClient(CVRDB_URI).get_default_database()
+cvr_db = db1 = MongoClient(CVRDB_URI).get_default_database()
 
 @app.route('/mongo', methods = ['POST', 'GET'])
 @http_auth_required
@@ -43,6 +43,25 @@ def mongo():
     sys.stdout = buffer
     exec(cmd)
     return "{0}".format(buffer.getvalue()), 200
+
+@app.route('/cvr/adduser', methods = ['POST'])
+@http_auth_required
+@roles_required(ADMIN_ROLE)
+def cvrAddUser():
+
+    user_data = {
+        "email": ["test_user1@comcast.com"],
+        "first_name": ["test"],
+        "last_name": ["user1"],
+        "password": "1234512345",
+        "organization": 'api8.successfactors.com',
+        "tenant": "comcast",
+        "roles": ["recruiters"]
+    }
+    cvr_db.user.insert(user_data)
+
+
+
 
 @app.route('/summary', methods = ['GET'])
 @http_auth_required

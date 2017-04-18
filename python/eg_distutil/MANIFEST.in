@@ -1,0 +1,3 @@
+recursive-include adir *
+recursive-include bdir/bbdir *
+exclude adir/abc.txt
