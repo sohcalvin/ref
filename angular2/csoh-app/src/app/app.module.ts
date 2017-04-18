@@ -9,7 +9,9 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { HttpDataService } from './http-data.service';
 import { CtableComponent } from './ctable/ctable.component';
-import { UserFormComponent } from './user-form/user-form.component';
+import { UserFormComponent } from './user-management/user-form/user-form.component';
+import { UserListComponent } from './user-management/user-list/user-list.component';
+import { UserManagementComponent } from './user-management/user-management.component';
 ;
 
 @NgModule({
@@ -18,7 +20,9 @@ import { UserFormComponent } from './user-form/user-form.component';
     DashboardComponent,
     PageNotFoundComponent,
     CtableComponent,
-    UserFormComponent
+    UserFormComponent,
+    UserListComponent,
+    UserManagementComponent
   ],
   imports: [
      BrowserModule

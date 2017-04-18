@@ -1,4 +1,5 @@
 export class User {
+	public name: string;
   constructor(
     
     public email: string,
@@ -7,5 +8,7 @@ export class User {
     public password: string,
     public roles : string[],
     public id?: number
-  ) {  }
+  ) {  
+  	this.name = firstName + " " + lastName;
+  }
 }

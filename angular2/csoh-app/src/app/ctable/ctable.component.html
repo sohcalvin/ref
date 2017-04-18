@@ -1,6 +1,6 @@
 
 <div id = "{{tableData.id}}">
-	<div class="table_title">
+	<div *ngIf="title" class="table_title">
 			{{title}}
 	</div>
 	<table  [ngClass] = "tableStyle">

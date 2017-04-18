@@ -1,0 +1,16 @@
+[
+	{
+		"email" : "calvinsoh@somewhere.com",
+		"firstName" : "Calvin",
+		"lastName" : "Soh",
+		"roles" : ["recruiter"]
+	},
+	{
+		"email" : "annielee@somewhere.com",
+		"firstName" : "Annie",
+		"lastName" : "Lee",
+		"roles" : ["recruiter"]
+	}
+
+
+]
