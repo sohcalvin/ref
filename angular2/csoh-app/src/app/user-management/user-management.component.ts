@@ -6,17 +6,14 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./user-management.component.css']
 })
 export class UserManagementComponent implements OnInit {
-
+  private showDialog :boolean= false;
   constructor() { }
 
   ngOnInit() {
   }
 
-  popoverNewUserForm(target: HTMLElement) : void{
-  	console.log(target);
-  	  // target.popover({
-     //    title: 'My Popover'
-     //   });
-  }
+  // popoverNewUserForm(target: HTMLElement) : void{
+  // 	console.log(target);
+  // }
 
 }

@@ -4,6 +4,8 @@
   <div class="row">
   	<user-list></user-list>
   </div>
-  <div class="btn btn-info" (click)="popoverNewUserForm($event.currentTarget)"> New User</div>
+  <div class="btn btn-info" (click)="showDialog = !showDialog" > New User</div>
+  <cdialog [(visible)]="showDialog">
   	<user-form></user-form>
+  </cdialog>
 </div>
