@@ -8,18 +8,17 @@ import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PageNotFoundComponent } from './page-not-found/page-not-found.component';
 import { HttpDataService } from './http-data.service';
-import { CtableComponent } from './ctable/ctable.component';
+// import { CTableComponent } from './ctable/ctable.component';
 import { UserFormComponent } from './user-management/user-form/user-form.component';
 import { UserListComponent } from './user-management/user-list/user-list.component';
 import { UserManagementComponent } from './user-management/user-management.component';
-;
+import { CUtilityModule } from "./cutility/cutility.module";
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
     PageNotFoundComponent,
-    CtableComponent,
     UserFormComponent,
     UserListComponent,
     UserManagementComponent
@@ -28,7 +27,8 @@ import { UserManagementComponent } from './user-management/user-management.compo
      BrowserModule
     ,FormsModule
     ,HttpModule
-    ,AppRoutingModule   
+    ,AppRoutingModule
+    ,CUtilityModule  
     
    
   ],

@@ -6,7 +6,7 @@ import { Component, OnInit, Input,OnChanges } from '@angular/core';
   templateUrl: './ctable.component.html',
   styleUrls: ['./ctable.component.css']
 })
-export class CtableComponent implements OnInit,OnChanges {
+export class CTableComponent implements OnInit,OnChanges {
 	@Input() tableData={};  // Please do not reference this directly in template
 	@Input() tableStyle = ['table'];
 	@Input() columnStyle=[];
