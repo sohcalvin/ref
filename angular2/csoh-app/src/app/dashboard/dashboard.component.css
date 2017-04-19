@@ -1,3 +1,10 @@
-div ctable .table_title {
-	color:blue;
+:host >>> .table_title {
+	color:#337ab7;
+	font-size: large;
 }
+
+:host >>> #ten1 .col_0 {
+	font-weight: bold
+}
+
+

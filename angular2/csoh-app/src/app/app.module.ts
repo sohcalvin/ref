@@ -13,6 +13,7 @@ import { UserFormComponent } from './user-management/user-form/user-form.compone
 import { UserListComponent } from './user-management/user-list/user-list.component';
 import { UserManagementComponent } from './user-management/user-management.component';
 import { CUtilityModule } from "./cutility/cutility.module";
+// import { CdialogComponent } from './cdialog/cdialog.component';
 
 @NgModule({
   declarations: [
