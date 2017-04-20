@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { User } from '../user';
+import { HttpDataService } from "../../http-data.service";
 
 
 @Component({
@@ -12,10 +13,16 @@ export class UserFormComponent implements OnInit {
 
 	user : User = new User("--email--","","","",[]);
 
-  	constructor() { }
+  	constructor(private httpDataService : HttpDataService) { }
 
   	ngOnInit() {
   	}
+	
+	postNewUser(){
+		this.httpDataService.postNewUser(this.user)
+		.subscribe(j=> j,
+		error => console.log(<any>error));
+	}
 
  
 }

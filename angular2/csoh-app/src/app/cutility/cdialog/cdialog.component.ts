@@ -10,10 +10,10 @@ import {
     trigger('dialog', [
       transition('void => *', [
         style({ transform: 'scale3d(.3, .3, .3)' }),
-        animate(100)
+        animate(300)
       ]),
       transition('* => void', [
-        animate(100, style({ transform: 'scale3d(.0, .0, .0)' }))
+        animate(300, style({ transform: 'scale3d(.0, .0, .0)' }))
       ])
     ])
   ]
