@@ -20,7 +20,7 @@ export class UserFormComponent implements OnInit {
 	
 	postNewUser(){
 		this.httpDataService.postNewUser(this.user)
-		.subscribe(j=> j,
+		.subscribe(j=> console.log(j),
 		error => console.log(<any>error));
 	}
 

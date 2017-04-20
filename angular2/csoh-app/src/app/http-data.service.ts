@@ -7,7 +7,7 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class HttpDataService {
-    private urlPostNewUser="assets/summary.json";
+    private urlPostNewUser="api/user/new";
 
   constructor(private http : Http) { }
 
