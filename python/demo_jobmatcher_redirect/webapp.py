@@ -7,12 +7,6 @@ app = Flask(__name__)
 
 
 
-URL_GEN_TOKEN = "https://ml-test.apimanagement.hana.ondemand.com/mlservice_oauth/generateToken"
-URL_CREATE_HASH = "https://validation-cvr-dataservice.cfapps.us10.hana.ondemand.com/cvr/create-hash"
-# URL_CREATE_HASH = "https://ml-test.apimanagement.hana.ondemand.com/recommender/matchcvtojob"
-
-URL_JOBMATCHER= "https://validation-sap-jobmatcher.cfapps.us10.hana.ondemand.com/#/"
-
 def getAccessToken():
     client_auth = requests.auth.HTTPBasicAuth(CLIENT_ID, CLIENT_SECRET)
     post_data = {"grant_type": "client_credentials"}
