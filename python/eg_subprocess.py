@@ -24,4 +24,4 @@ def runCall(cmd_str) :
     subprocess.call(cmd, shell=False)
 
 os.environ['https_proxy'] = 'http://proxy.sin.sap.corp:8080'
-runCall("cf apps ")
+runCall("echo abc")

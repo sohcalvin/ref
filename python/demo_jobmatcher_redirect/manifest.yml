@@ -1,0 +1,9 @@
+---
+applications:
+- name: validation-jobmatcher-redirect
+  memory: 1GB
+  buildpack: python_buildpack
+  timeout: 180
+  command: python webapp.py 
+  env:
+    PYTHONPATH: .

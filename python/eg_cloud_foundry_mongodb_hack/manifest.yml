@@ -1,6 +1,6 @@
 ---
 applications:
-- name: delme-nydemo
+- name: delme-validation
   memory: 1GB
   buildpack: python_buildpack
   #git://github.com/ihuston/python-conda-buildpack.git
