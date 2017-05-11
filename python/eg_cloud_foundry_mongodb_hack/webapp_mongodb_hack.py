@@ -6,23 +6,39 @@ import subprocess
 import json
 from pymongo import MongoClient
 from cloudfoundry_util import getMongodbUriFromCloudfoundryEnv
-from security_imports import configureSecurityMongoDb, DEFAULT_MONGODB_URI, ADMIN_ROLE, makeMongodbUri
+from security_imports import configureSecurityMongoDb, ADMIN_ROLE, makeMongodbUri
+import pika
+from cvr_db import CvrDb
+
 
 app = Flask(__name__)
 
+#### Get Backing service URIs ####
 dbname2uri_map = getMongodbUriFromCloudfoundryEnv()
 USERDB_URI = dbname2uri_map.get("admin-mongodb")
 CVRDB_URI = dbname2uri_map.get("cvr-mongodb")
+RABBITMQ_URI = getMongodbUriFromCloudfoundryEnv().get("cv-rabbitmq")
+RABBITMQ_QUEUES = ["rpc-job_matcher", "rpc-career_level_classifier"]
 
-if(USERDB_URI is None or CVRDB_URI is None) :
+if(USERDB_URI is None or CVRDB_URI is None or RABBITMQ_URI is None) :
     print("Running in Local enviroment due to cloudfoundry mongodb not found in VCAP_SERVICES environment")
-    USERDB_URI = None
+    USERDB_URI =  makeMongodbUri("user_db")
     CVRDB_URI = makeMongodbUri("cvr_db")
+    RABBITMQ_URI =  'amqp://guest:guest@localhost:5672/'
 else :
     print("Running in Cloud Foundry enviroment")
 
+
+### Declaration and Setup
 configureSecurityMongoDb(app, user_mongodb_uri=USERDB_URI)
 cvr_db = db1 = MongoClient(CVRDB_URI).get_default_database()
+
+pika_conn_params = pika.URLParameters(RABBITMQ_URI)
+rabbitmq_connection = pika.BlockingConnection(pika_conn_params)
+
+cvr_db_obj = CvrDb(cvr_db)
+
+
 
 @app.route('/mongo', methods = ['POST', 'GET'])
 @http_auth_required
@@ -48,7 +64,6 @@ def mongo():
 @http_auth_required
 @roles_required(ADMIN_ROLE)
 def cvrAddUser():
-
     user_data = {
         "email": ["test_user1@comcast.com"],
         "first_name": ["test"],
@@ -63,11 +78,35 @@ def cvrAddUser():
 
 
 
+
+
+
+
+
+{
+    "id": "ten1",
+    "title": "Tenant1",
+    "header_labels": ["Property", "Value"],
+    "header_keys": ["property", "value"],
+    "data": [
+        {
+            "property": "Job count",
+            "value": "10"
+        },
+        {
+            "property": "CV count",
+            "value": "30"
+        }
+    ]
+
+}
+
 @app.route('/summary', methods = ['GET'])
 @http_auth_required
 @roles_required(ADMIN_ROLE)
 def summary():
-    import sys
+    data = cvr_db_obj.getSummary()
+
     jobs_cnt = db1.job.find().count()
     cv_cnt = db1.cv.find().count()
     distinct_owner = db1.job.distinct("owner")
@@ -96,7 +135,22 @@ def summary():
         resp += "</table>"
         resp += "<hr>"
     resp += b
+
+    for qn in RABBITMQ_QUEUES:
+        channel = rabbitmq_connection.channel()
+        queue = channel.queue_declare(
+            queue=qn, durable=True,
+            exclusive=False, auto_delete=False
+        )
+        print("{} : {}".format(qn, queue.method.message_count))
+
     return "<html>{}</html>".format(resp), 200
+
+
+
+
+
+
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 9099))

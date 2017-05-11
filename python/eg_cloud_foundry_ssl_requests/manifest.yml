@@ -1,0 +1,11 @@
+---
+applications:
+- name: delme-csoh
+  memory: 1GB
+  buildpack: python_buildpack
+  timeout: 180
+  command: python webapp.py
+  #command: .conda/bin/python webapp.py
+  env:
+    PYTHONPATH: .
+

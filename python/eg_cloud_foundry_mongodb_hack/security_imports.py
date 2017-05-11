@@ -9,7 +9,7 @@ DEFAULT_MONGODB_URI = "mongodb://localhost:27017/user_db"
 def makeMongodbUri(db_name, server="localhost", port ="27017"):
     return "mongodb://{}:{}/{}".format(server, port, db_name)
 
-def initAdminUser(user_datastore) :
+def _initAdminUser(user_datastore) :
     role = user_datastore.find_role(ADMIN_ROLE)
     if(role is None) :
         print("Initializing admin role")
@@ -21,7 +21,7 @@ def initAdminUser(user_datastore) :
         encrypted_password = utils.encrypt_password('changeit')
         user_datastore.create_user(name="superuser", email=admin_email, password=encrypted_password, roles=[ADMIN_ROLE])
 
-def setupRoleManagementEndpoints(app, user_datastore) :
+def _setupRoleManagementEndpoints(app, user_datastore) :
     @app.route("/user/addrole", methods=['PUT'])
     @http_auth_required
     @roles_required(ADMIN_ROLE)
@@ -103,8 +103,8 @@ def configureSecurityMongoDb(app, user_mongodb_uri=None) :
         user_datastore = MongoEngineUserDatastore(db, User, Role)
         security = Security(app, user_datastore)
 
-        initAdminUser(user_datastore)
-        setupRoleManagementEndpoints(app, user_datastore)
+        _initAdminUser(user_datastore)
+        _setupRoleManagementEndpoints(app, user_datastore)
 
 
         return db, user_datastore, security
