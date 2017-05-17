@@ -14,7 +14,7 @@ def _initAdminUser(user_datastore) :
     if(role is None) :
         print("Initializing admin role")
         user_datastore.create_role(name=ADMIN_ROLE, description="Administrator")
-    admin_email = "su@admin.com"
+    admin_email = "admin"
     user = user_datastore.find_user(email=admin_email)
     if(user is None) :
         print("Initializing admin user")

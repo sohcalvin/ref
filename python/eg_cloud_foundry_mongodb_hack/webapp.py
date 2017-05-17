@@ -9,7 +9,8 @@ from cloudfoundry_util import getMongodbUriFromCloudfoundryEnv
 from security_imports import configureSecurityMongoDb, ADMIN_ROLE, makeMongodbUri
 import pika
 from cvr_db import CvrDb
-
+from util_rabbitmq import getRabbitmqQueues
+from util_formatter import formatListDict2HtmlTable
 
 app = Flask(__name__)
 
@@ -18,7 +19,18 @@ dbname2uri_map = getMongodbUriFromCloudfoundryEnv()
 USERDB_URI = dbname2uri_map.get("admin-mongodb")
 CVRDB_URI = dbname2uri_map.get("cvr-mongodb")
 RABBITMQ_URI = getMongodbUriFromCloudfoundryEnv().get("cv-rabbitmq")
-RABBITMQ_QUEUES = ["rpc-job_matcher", "rpc-career_level_classifier"]
+RABBITMQ_QUEUES = [
+"rpc-career_level_classifier",
+"rpc-cv_content_classifier",
+"rpc-cv_parsing_service",
+"rpc-date_extractor_service",
+"rpc-document_matcher_service",
+"rpc-industry_classifier",
+"rpc-job_matcher",
+"rpc-job_title_extractor",
+"rpc-keyword_generator_service",
+"rpc-location_extractor"
+        ]
 
 if(USERDB_URI is None or CVRDB_URI is None or RABBITMQ_URI is None) :
     print("Running in Local enviroment due to cloudfoundry mongodb not found in VCAP_SERVICES environment")
@@ -39,6 +51,8 @@ rabbitmq_connection = pika.BlockingConnection(pika_conn_params)
 cvr_db_obj = CvrDb(cvr_db)
 
 
+
+############ API ############
 
 @app.route('/mongo', methods = ['POST', 'GET'])
 @http_auth_required
@@ -75,82 +89,24 @@ def cvrAddUser():
     }
     cvr_db.user.insert(user_data)
 
-
-
-
-
-
-
-
-
-{
-    "id": "ten1",
-    "title": "Tenant1",
-    "header_labels": ["Property", "Value"],
-    "header_keys": ["property", "value"],
-    "data": [
-        {
-            "property": "Job count",
-            "value": "10"
-        },
-        {
-            "property": "CV count",
-            "value": "30"
-        }
-    ]
-
-}
-
 @app.route('/summary', methods = ['GET'])
 @http_auth_required
 @roles_required(ADMIN_ROLE)
 def summary():
+    distinct_data = cvr_db_obj.getDistinctSummary()
     data = cvr_db_obj.getSummary()
-
-    jobs_cnt = db1.job.find().count()
-    cv_cnt = db1.cv.find().count()
-    distinct_owner = db1.job.distinct("owner")
-    distinct_organization = db1.job.distinct("organization")
-    b = "<br>"
-    resp = "Total jobs : {}{}".format(jobs_cnt, b)
-    resp +=  "Total cvs : {}{}".format(cv_cnt, b)
-    resp += b
-
-    resp += "<b>Distinct owners :</b> {}".format(b)
-    for o in distinct_owner :
-        resp += "- {}{}".format(o, b)
-    resp += b
-
-    resp += "<b>For each organization :</b> {}".format(b)
-    resp += "<hr>"
-    for o in distinct_organization:
-        resp += "<table>"
-        resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Organization", o)
-        resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs", db1.job.find({"organization" : o }).count())
-        resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs - active",db1.job.find({"organization": o, "active" : True }).count() )
-        resp += "<tr><td>{}</td> <td>{}</td></tr>".format("Jobs - active with cvs", db1.job.find(
-            {"organization": o, "active": True, 'cv_ids': {'$exists': True, '$ne': []}}).count())
-
-        resp += "<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td></td></tr>"
-        resp += "</table>"
-        resp += "<hr>"
-    resp += b
-
-    for qn in RABBITMQ_QUEUES:
-        channel = rabbitmq_connection.channel()
-        queue = channel.queue_declare(
-            queue=qn, durable=True,
-            exclusive=False, auto_delete=False
-        )
-        print("{} : {}".format(qn, queue.method.message_count))
-
-    return "<html>{}</html>".format(resp), 200
-
-
-
-
-
-
+    queues = getRabbitmqQueues(rabbitmq_connection, RABBITMQ_QUEUES)
+    if(request.args.get("format") == "json") :
+        return json.dumps({
+            "distinct_data" : distinct_data,
+            "data" : data,
+            "queues" : queues
+        }), 200
+    else :
+        distinct_data_html = formatListDict2HtmlTable(["owner", "organization"], distinct_data)
+        data_html = formatListDict2HtmlTable(["owner", "cv_count", "job_count", "job_count_active", "job_count_active_with_cvs"], data)
+        queues_html = formatListDict2HtmlTable(["queue", "message_count"], queues)
+        return "{}<br>{}<br>{}".format(distinct_data_html, data_html, queues_html) , 200
 
 if __name__ == '__main__':
     port = int(os.getenv("PORT", 9099))
