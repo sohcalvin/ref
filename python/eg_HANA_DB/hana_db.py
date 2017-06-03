@@ -80,11 +80,7 @@ class HanaDb(object) :
             if(proc ==None) :
                 print(result)
             else :
-                csv =""
-                for c in result :
-                    csv += str(c) +","
-                csv += "\n"
-                proc(csv)
+                proc(result)
 
     def query(self, sql,limit=None, proc=None) :
         if (limit is not None):
@@ -99,10 +95,7 @@ class HanaDb(object) :
             if(proc ==None) :
                 print(result)
             else :
-                csv =""
-                for c in result :
-                    csv += c +","
-                proc(csv)
+                proc(result)
 
 
     def describeAllViews(self, schema_name_filter= None, table_name_filter=None) :
