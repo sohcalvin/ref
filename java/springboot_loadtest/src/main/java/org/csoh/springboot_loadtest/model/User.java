@@ -1,7 +1,9 @@
 package org.csoh.springboot_loadtest.model;
 
 
+import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.data.annotation.Id;
+
 
 /**
  * Created by i319984 on 3/6/17.
@@ -11,6 +13,8 @@ public class User {
     public String id;
 
     public String firstName;
+
+
 
     public String getLastName() {
         return lastName;
