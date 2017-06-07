@@ -14,8 +14,6 @@ public class User {
 
     public String firstName;
 
-
-
     public String getLastName() {
         return lastName;
     }
@@ -31,6 +29,7 @@ public class User {
     public User(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
+
     }
 
 }

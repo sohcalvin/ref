@@ -7,6 +7,7 @@ package org.csoh.springboot_loadtest.controller;
 import org.csoh.springboot_loadtest.model.User;
 import org.csoh.springboot_loadtest.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -19,12 +20,21 @@ public class TargetController {
     @Autowired
     private UserRepository repository;
 
+    @Autowired
+    private MongoTemplate mongoTemplate;
+
+
     @RequestMapping("/")
     public String index() {
 
-        repository.deleteAll();
-        repository.save(new User("Alice", "Smith"));
-        repository.save(new User("Bob", "Smith"));
+//        repository.deleteAll();
+//        repository.save(new User("Alice", "Smith"));
+//        repository.save(new User("Bob", "Smith"));
+
+        mongoTemplate.dropCollection("user");
+        mongoTemplate.save(new User("Calvin", "Soh"));
+        mongoTemplate.save(new User("Bob", "Smith"));
+
 
         return "What is my ips";
     }

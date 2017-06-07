@@ -1,0 +1,14 @@
+---
+applications:
+- name: springboot-loadtest
+  memory: 512MB
+  timeout: 180
+  disk_quota: 1024M
+  no-route: false
+  buildpack: java_buildpack
+#  command: java -jar target/scala-2.11/file-parsing-service-assembly-1.0.jar
+#  path: target/scala-2.11/file-parsing-service-assembly-1.0.jar
+  path: target/springboot_loadtest.jar
+#  path: target/scala-2.11/
+  services:
+    - my-mongodb
