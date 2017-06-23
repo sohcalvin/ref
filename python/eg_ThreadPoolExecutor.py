@@ -18,7 +18,7 @@ def processRecord(row) :
     st = random.randint(1,5)
     st = 2
     sleep(st)
-    print(row,") slept for ", st, "seconds")
+    print("Processed", row, "- slept for ", st, "seconds")
 
 @TimeMeByFuncMethod("xxx")
 def poolExecution(record_processor,threads= 5) :
@@ -29,16 +29,15 @@ def poolExecution(record_processor,threads= 5) :
             if (len(futures_map) < threads):
                 print("submitted at ", i, " less than 2")
                 f = executor.submit(record_processor, i)
-                futures_map[f] = 1
+                futures_map[f] = i
             else :
                 done, not_done = wait(futures_map.keys(), return_when=FIRST_COMPLETED)
                 for d in done :
-                    futures_map.pop(d)
-                    print("======popped",d)
+                    x = futures_map.pop(d)
+                    print(">> Popped",x)
                 print("submitted at ", i)
                 f = executor.submit(record_processor, i)
-                futures_map[f] = 1
+                futures_map[f] = i
 
-
-poolExecution(processRecord, worker=20 )
+poolExecution(processRecord, threads=2 )
 
