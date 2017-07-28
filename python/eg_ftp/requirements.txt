@@ -1,1 +1,2 @@
 paramiko==2.1.2
+Flask-RESTful==0.3.6

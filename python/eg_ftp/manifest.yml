@@ -1,0 +1,14 @@
+---
+applications:
+- name: lr-ftptest
+  memory: 1GB
+  timeout: 180
+#  command: python webapp.py
+  command: python eg_sftp.py
+  no-route: false
+  health-check-type: none
+  disk_quota: 2048M
+  path: .
+  services:
+    - lr-mongodb
+    - lr-application-logs
