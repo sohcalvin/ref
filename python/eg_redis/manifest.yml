@@ -1,0 +1,15 @@
+---
+applications:
+- name: delme-test-redis
+  memory: 2GB
+  buildpack: python_buildpack
+  timeout: 180
+  command: python test_redis.py
+  path: .
+  no-route: true
+  health-check-type: none
+  disk_quota: 4096M
+  env:
+    PYTHONPATH: .
+  services:
+    - lr-redis
