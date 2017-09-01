@@ -6,9 +6,10 @@ class FileCache():
     def __init__(self):
         self.fp_data = tempfile.NamedTemporaryFile(mode="w+", dir="/tmp")
         print(self.fp_data.name)
-        self.line_pos = [0]
-        # self.line_pos = array('I',[0])
+        # self.line_pos = [0]
+        self.line_pos = array('I',[0])
         self.current_pos = 0
+
 
     def __enter__(self):
         return self
@@ -17,7 +18,7 @@ class FileCache():
         self.fp_data.close()
 
     def writeLine(self, line):
-        c = line + "\n"
+        c = line # + "\n"
         self.current_pos += len(c)
         self.line_pos.append(self.current_pos)
         self.fp_data.write(c)
@@ -36,26 +37,30 @@ def genDummyFile(num,fname) :
         for i in range(num):
             fo.write(str(i) + "\n")
     print("genDummyFile - Done")
-@profile
+
+# @profile
 def writeToCache(fc, fname) :
     with open(fname, "r") as fi:
         for d in fi:
-            fc.writeLine(d)
+            fc.writeLine(d.strip())
 
 
 
 if __name__ == '__main__':
 
     fc = FileCache()
-    fname = "test_file1mil.txt"
+    fname = "test_file100mil.txt"
 
-    # genDummyFile(1000000, fname)
+    # genDummyFile(100000000, fname)
     import time
     t1 = time.time()
     writeToCache(fc, fname)
 
     t2 = time.time()
-    # print(fc.readLine(1000000))
+    for i in range(10) :
+        print(fc.readLine(100000))
+        print(fc.readLine(0))
+
 
     t3= time.time()
 
